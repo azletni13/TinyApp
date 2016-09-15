@@ -31,11 +31,18 @@ app.get('/urls/new', (req, res) => {
   res.render('urls_new');
 });
 
+
 //gets URLS/id page and shows the website associated with that id
 app.get('/urls/:id', (req, res) => {
   res.render('urls_show', {
     shortURL: req.params.id
   });
+});
+
+//redirects user to longURL
+app.get('/:shortURL', (req, res) => {
+  let longURL = urlDatabase[req.params.shortURL];
+  res.redirect(longURL);
 });
 
 // takes in URL that user puts in form page
@@ -44,25 +51,25 @@ app.post('/urls', (req, res) => {
   res.send("Ok");         // Respond with 'Ok' (we will replace this)
 });
 
-
-//redirects user to longURL
-app.get('/u/:shortURL', (req, res) => {
-  let longURL = urlDatabase[req.params.shortURL];
-  res.redirect(longURL);
-});
-
 //deletes a shortened URL from database
 app.delete('/urls/:id', (req, res) => {
-    delete urlDatabase[req.params.id];
-    res.redirect("/urls");
+  delete urlDatabase[req.params.id];
+  res.redirect("/urls");
 });
+
+//edits an existing shortened URL
+app.put('/urls/:id', (req, res) => {
+  var shortURL = req.params.id;
+  urlDatabase[shortURL] = req.body.longURL;
+  res.redirect("/urls");
+
+});
+
 
 //server listening
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
-
-
 
 
 
