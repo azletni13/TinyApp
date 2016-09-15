@@ -4,8 +4,13 @@ const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 8080; // default port 8080
 const bodyParser = require("body-parser");
+const methodOverride = require('method-override')
 
 app.use(bodyParser.urlencoded());
+
+//overrride with POST having ?_method=DELETE
+app.use(methodOverride('_method'));
+
 
 app.set('view engine', 'ejs');
 
@@ -22,27 +27,34 @@ app.get('/urls', (req, res) => {
 });
 
 // gets URLS/new page
-app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+app.get('/urls/new', (req, res) => {
+  res.render('urls_new');
 });
 
 //gets URLS/id page and shows the website associated with that id
-app.get("/urls/:id", (req, res) => {
-  // console.log(req.params.id)
-  res.render("urls_show", {
+app.get('/urls/:id', (req, res) => {
+  res.render('urls_show', {
     shortURL: req.params.id
   });
 });
 
-//takes in URL that user puts in form page
-app.post("/urls", (req, res) => {
-  console.log(req.body);  // debug statement to see POST parameters
+// takes in URL that user puts in form page
+app.post('/urls', (req, res) => {
+  // console.log(req.body);  // debug statement to see POST parameters
   res.send("Ok");         // Respond with 'Ok' (we will replace this)
 });
 
-app.get("/u/:shortURL", (req, res) => {
+
+//redirects user to longURL
+app.get('/u/:shortURL', (req, res) => {
   let longURL = urlDatabase[req.params.shortURL];
   res.redirect(longURL);
+});
+
+//deletes a shortened URL from database
+app.delete('/urls/:id', (req, res) => {
+    delete urlDatabase[req.params.id];
+    res.redirect("/urls");
 });
 
 //server listening
@@ -53,11 +65,12 @@ app.listen(PORT, () => {
 
 
 
+
 //generates random string
 function generateRandomString() {
-  const randomString = "";
+  const randomString = '';
 
-  const charset = "abcdefghijklmnopqrstuvwxyz123456789"
+  const charset = 'abcdefghijklmnopqrstuvwxyz123456789'
 
   for (var i = 0; i > 6; i++) {
     let randomposition = Math.floor(Math.random() * 37);

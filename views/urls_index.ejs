@@ -5,8 +5,9 @@
 </head>
 <body>
   <h1>URLS</h1>
-  <% for (i in urls) { %>
+  <% for (var i in urls) { %>
     <p><%= urls[i] %></p>
+    <form method="POST" action="/urls/<%=i%>?_method=DELETE"><button name ="delete" type = "submit">Delete</button></form>
   <% } %>
 </body>
 </html>
