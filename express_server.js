@@ -39,7 +39,7 @@ app.get('/urls/:id', (req, res) => {
   });
 });
 
-//redirects user to longURL
+//redirects user to longURLm
 app.get('/:shortURL', (req, res) => {
   let longURL = urlDatabase[req.params.shortURL];
   res.redirect(longURL);
@@ -47,7 +47,7 @@ app.get('/:shortURL', (req, res) => {
 
 // takes in URL that user puts in form page
 app.post('/urls', (req, res) => {
-  // console.log(req.body);  // debug statement to see POST parameters
+  console.log(req.body);  // debug statement to see POST parameters
   res.send("Ok");         // Respond with 'Ok' (we will replace this)
 });
 
@@ -80,7 +80,7 @@ function generateRandomString() {
   const charset = 'abcdefghijklmnopqrstuvwxyz123456789'
 
   for (var i = 0; i > 6; i++) {
-    let randomposition = Math.floor(Math.random() * 37);
+    let randomposition = Math.floor(Math.random() * 36);
     randomString += charset[randomposition];
   }
   console.log(randomString);
