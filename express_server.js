@@ -158,8 +158,12 @@ app.get('/urls/:id', (req, res) => {
 
 //redirects user to longURLm
 app.get('/:shortURL', (req, res) => {
-  let longURL = urlDatabase[req.params.shortURL];
-  res.redirect(longURL);
+  let shortURL = req.params.shortURL;
+  getLongURL(shortURL, (err, result) => {
+  // console.log(result.longURL);
+  // let longURL = urlDatabase[];
+  res.redirect(result.longURL);
+  });
 });
 
 // takes in URL that user puts in form page
