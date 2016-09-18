@@ -39,7 +39,7 @@ function getLongURL(shortURL, cb) {
 
   });
 
-}
+};
 
 function getURLS(cb) {
 
@@ -62,7 +62,7 @@ function getURLS(cb) {
 
   });
 
-}
+};
 
 function postURL(randomString, newURL) {
 
@@ -206,7 +206,7 @@ function generateRandomString() {
     var randomPosition = Math.floor(Math.random() * 36);
 
     randomString += charset[randomPosition];
-  }
+  };
 
   return randomString;
 };
