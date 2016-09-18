@@ -24,7 +24,7 @@ function getLongURL(shortURL, cb) {
     if (err) {
       console.log("Could not connect! Unexpected error. Details below");
       throw err;
-    }
+    };
 
     console.log("Connected to the databse!");
 
@@ -33,9 +33,9 @@ function getLongURL(shortURL, cb) {
     urls.findOne({shortURL: shortURL}, (err, result)=>{
       return cb(null, result);
 
-    })
+    });
 
-      db.close();
+    db.close();
 
   });
 
@@ -48,7 +48,7 @@ function getURLS(cb) {
     if (err) {
       console.log("Could not connect! Unexpected error. Details below");
       throw err;
-    }
+    };
 
     let urls = db.collection("urls");
 
@@ -58,7 +58,7 @@ function getURLS(cb) {
 
     });
 
-      db.close();
+    db.close();
 
   });
 
@@ -71,7 +71,7 @@ function postURL(randomString, newURL) {
     if (err) {
       console.log("Could not connect! Unexpected error. Details below");
       throw err;
-    }
+    };
 
     let urls = db.collection("urls");
 
@@ -85,11 +85,11 @@ function postURL(randomString, newURL) {
 
     });
 
-      db.close();
+    db.close();
 
   });
 
-}
+};
 
 function deleteURL(shortURL) {
 
@@ -98,8 +98,7 @@ function deleteURL(shortURL) {
     if (err) {
       console.log("Could not connect! Unexpected error. Details below");
       throw err;
-    }
-
+    };
 
     let urls = db.collection("urls");
 
@@ -109,7 +108,7 @@ function deleteURL(shortURL) {
 
   });
 
-}
+};
 
 function updateURL(shortURL, longURL) {
 
@@ -118,7 +117,7 @@ function updateURL(shortURL, longURL) {
     if (err) {
       console.log("Could not connect! Unexpected error. Details below");
       throw err;
-    }
+    };
 
     let urls = db.collection("urls");
 
@@ -128,7 +127,7 @@ function updateURL(shortURL, longURL) {
 
   });
 
-}
+};
 
 //shows a list of LONG URLS on INDEX PAGE
 app.get('/urls', (req, res) => {
@@ -137,7 +136,6 @@ app.get('/urls', (req, res) => {
       URLlist: URLlist
     });
   });
-
 });
 
 // gets URLS/new page
@@ -160,24 +158,22 @@ app.get('/urls/:id', (req, res) => {
 app.get('/:shortURL', (req, res) => {
   let shortURL = req.params.shortURL;
   getLongURL(shortURL, (err, result) => {
-  // console.log(result.longURL);
-  // let longURL = urlDatabase[];
-  res.redirect(result.longURL);
+    res.redirect(result.longURL);
   });
 });
 
 // takes in URL that user puts in form page
 app.post('/urls', (req, res) => {
-  // console.log(req.body);  // debug statement to see POST parameters
-  var randomString = generateRandomString();
-  var newURL = req.body.longURL;
+  console.log(req.body);  // debug statement to see POST parameters
+  let randomString = generateRandomString();
+  let newURL = req.body.longURL;
   postURL(randomString, newURL);
   res.redirect("/urls");         // Respond with URLS_index page
 });
 
 //deletes a shortened URL from database
 app.delete('/urls/:id', (req, res) => {
-  var shortURL = req.params.id;
+  let shortURL = req.params.id;
   deleteURL(shortURL);
   res.redirect("/urls");
 });
@@ -185,8 +181,8 @@ app.delete('/urls/:id', (req, res) => {
 
 //edits an existing shortened URL
 app.put('/urls/:id', (req, res) => {
-  var shortURL = req.params.id;
-  var longURL = req.body.longURL;
+  let shortURL = req.params.id;
+  let longURL = req.body.longURL;
   updateURL(shortURL, longURL);
   res.redirect("/urls");
 
@@ -203,17 +199,17 @@ app.listen(PORT, () => {
 function generateRandomString() {
   var randomString = '';
 
-  var charset = 'abcdefghijklmnopqrstuvwxyz123456789';
-
+  const charset = 'abcdefghijklmnopqrstuvwxyz123456789';
 
   for (var i = 0; i < 6; i++) {
-  var randomPosition = Math.floor(Math.random() * 36);
 
-  randomString += charset[randomPosition];
+    var randomPosition = Math.floor(Math.random() * 36);
+
+    randomString += charset[randomPosition];
   }
 
   return randomString;
-}
+};
 
 
 
