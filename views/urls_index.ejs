@@ -4,9 +4,10 @@
   <% include partials/_header %>
 </head>
 <body>
-  <h1>URLS</h1>
+  <h2>Long and Short URL's:</h2>
   <% for (var i in URLlist) { %>
     <p><%= URLlist[i].longURL %></p>
+    <p><%= URLlist[i].shortURL %></p>
     <form method="POST" action="/urls/<%=URLlist[i].shortURL%>?_method=DELETE"><button name ="delete" type = "submit">Delete</button></form>
   <% } %>
 </body>
