@@ -17,118 +17,50 @@ app.use(methodOverride('_method'));
 
 app.set('view engine', 'ejs');
 
-function getLongURL(shortURL, cb) {
+var conn;
 
-  MongoClient.connect(MONGODB_URI, (err, db) => {
-
+MongoClient.connect(MONGODB_URI, (err, db) => {
     if (err) {
       console.log("Could not connect! Unexpected error. Details below");
       throw err;
     };
-
     console.log("Connected to the databse!");
+    conn = db;
+});
 
-    let urls = db.collection("urls");
 
-    // console.log(shortURL);
+function getLongURL(shortURL, cb) {
+    let urls = conn.collection("urls");
     urls.findOne({shortURL: shortURL}, (err, result)=>{
       return cb(null, result);
-
     });
-
-    db.close();
-
-  });
-
 };
 
 function getURLS(cb) {
-
-  MongoClient.connect(MONGODB_URI, (err, db) => {
-
-    if (err) {
-      console.log("Could not connect! Unexpected error. Details below");
-      throw err;
-    };
-
-    let urls = db.collection("urls");
-
+    let urls = conn.collection("urls");
     urls.find().toArray((err, result)=>{
-      // console.log(result);
-
       return cb(null, result);
-
     });
-
-    db.close();
-
-  });
-
 };
 
 function postURL(randomString, newURL) {
-
-  MongoClient.connect(MONGODB_URI, (err, db) => {
-
-    if (err) {
-      console.log("Could not connect! Unexpected error. Details below");
-      throw err;
-    };
-
-    let urls = db.collection("urls");
-
+    let urls = conn.collection("urls");
     urls.insert(
-
       {shortURL: randomString,
         longURL: newURL}
-
       ,(err, result)=>{
       console.log(`${newURL} was added to database with shortURL: ${randomString}.`);
-
     });
-
-    db.close();
-
-  });
-
 };
 
 function deleteURL(shortURL) {
-
-  MongoClient.connect(MONGODB_URI, (err, db) => {
-
-    if (err) {
-      console.log("Could not connect! Unexpected error. Details below");
-      throw err;
-    };
-
-    let urls = db.collection("urls");
-
+    let urls = conn.collection("urls");
     urls.deleteOne({"shortURL": shortURL});
-
-    db.close();
-
-  });
-
 };
 
 function updateURL(shortURL, longURL) {
-
-  MongoClient.connect(MONGODB_URI, (err, db) => {
-
-    if (err) {
-      console.log("Could not connect! Unexpected error. Details below");
-      throw err;
-    };
-
-    let urls = db.collection("urls");
-
+    let urls = conn.collection("urls");
     urls.update({"shortURL": shortURL}, {$set: {"longURL": longURL}});
-    console.log(longURL);
-    db.close();
-
-  });
-
 };
 
 //shows a list of LONG URLS on INDEX PAGE
@@ -147,7 +79,6 @@ app.get('/urls/new', (req, res) => {
 
 //shows the page to update short URL
 app.get('/urls/:id', (req, res) => {
-  console.log(req.params.id);
   var shortURL = req.params.id;
   getLongURL(shortURL, (err, longURL) => {
     res.render('urls_show', {
@@ -160,7 +91,6 @@ app.get('/urls/:id', (req, res) => {
 //redirects user to longURL
 app.get('/:shortURL', (req, res) => {
   var shortURL = req.params.shortURL;
-  console.log(shortURL);
   getLongURL(shortURL, (err, result) => {
     res.redirect(result.longURL);
   });
@@ -187,8 +117,6 @@ app.delete('/urls/:id', (req, res) => {
 app.put('/urls/:id', (req, res) => {
   var shortURL = req.params.id;
   var longURL = req.body.longURL;
-  // console.log(shortURL);
-  // console.log(longURL);
   updateURL(shortURL, longURL);
   res.redirect("/urls");
 
@@ -199,21 +127,17 @@ app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
+process.on('exit', () => conn.close());
 
 
 //generates random string
 function generateRandomString() {
   var randomString = '';
-
   const charset = 'abcdefghijklmnopqrstuvwxyz123456789';
-
   for (var i = 0; i < 6; i++) {
-
     var randomPosition = Math.floor(Math.random() * 36);
-
     randomString += charset[randomPosition];
   };
-
   return randomString;
 };
 
