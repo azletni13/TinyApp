@@ -30,6 +30,7 @@ function getLongURL(shortURL, cb) {
 
     let urls = db.collection("urls");
 
+    // console.log(shortURL);
     urls.findOne({shortURL: shortURL}, (err, result)=>{
       return cb(null, result);
 
@@ -53,6 +54,7 @@ function getURLS(cb) {
     let urls = db.collection("urls");
 
     urls.find().toArray((err, result)=>{
+      // console.log(result);
 
       return cb(null, result);
 
@@ -122,7 +124,7 @@ function updateURL(shortURL, longURL) {
     let urls = db.collection("urls");
 
     urls.update({"shortURL": shortURL}, {$set: {"longURL": longURL}});
-
+    console.log(longURL);
     db.close();
 
   });
@@ -145,7 +147,8 @@ app.get('/urls/new', (req, res) => {
 
 //shows the page to update short URL
 app.get('/urls/:id', (req, res) => {
-  let shortURL = req.params.id;
+  console.log(req.params.id);
+  var shortURL = req.params.id;
   getLongURL(shortURL, (err, longURL) => {
     res.render('urls_show', {
       shortURL: shortURL
@@ -154,9 +157,10 @@ app.get('/urls/:id', (req, res) => {
 });
 
 
-//redirects user to longURLm
+//redirects user to longURL
 app.get('/:shortURL', (req, res) => {
-  let shortURL = req.params.shortURL;
+  var shortURL = req.params.shortURL;
+  console.log(shortURL);
   getLongURL(shortURL, (err, result) => {
     res.redirect(result.longURL);
   });
@@ -164,9 +168,9 @@ app.get('/:shortURL', (req, res) => {
 
 // takes in URL that user puts in form page
 app.post('/urls', (req, res) => {
-  console.log(req.body);  // debug statement to see POST parameters
-  let randomString = generateRandomString();
-  let newURL = req.body.longURL;
+  // console.log(req.body);  // debug statement to see POST parameters
+  var randomString = generateRandomString();
+  var newURL = req.body.longURL;
   postURL(randomString, newURL);
   res.redirect("/urls");         // Respond with URLS_index page
 });
@@ -181,8 +185,10 @@ app.delete('/urls/:id', (req, res) => {
 
 //edits an existing shortened URL
 app.put('/urls/:id', (req, res) => {
-  let shortURL = req.params.id;
-  let longURL = req.body.longURL;
+  var shortURL = req.params.id;
+  var longURL = req.body.longURL;
+  // console.log(shortURL);
+  // console.log(longURL);
   updateURL(shortURL, longURL);
   res.redirect("/urls");
 
