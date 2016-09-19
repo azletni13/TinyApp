@@ -63,6 +63,10 @@ function updateURL(shortURL, longURL) {
     urls.update({"shortURL": shortURL}, {$set: {"longURL": longURL}});
 };
 
+app.get('/', (req, res) => {
+  res.redirect('urls/new');
+});
+
 //shows a list of LONG URLS on INDEX PAGE
 app.get('/urls', (req, res) => {
   getURLS((err, URLlist) => {
@@ -89,10 +93,14 @@ app.get('/urls/:id', (req, res) => {
 
 
 //redirects user to longURL
-app.get('/:shortURL', (req, res) => {
+app.get('/u/:shortURL', (req, res) => {
   var shortURL = req.params.shortURL;
   getLongURL(shortURL, (err, result) => {
-    res.redirect(result.longURL);
+    if (!err && result) {
+      res.redirect(result.longURL);
+    } else {
+      res.send("This page does not exist");
+    }
   });
 });
 
