@@ -4,13 +4,15 @@ const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 8080; // default port 8080
 const bodyParser = require("body-parser");
-const methodOverride = require('method-override')
+const cookieParser = require('cookie-parser');
+const methodOverride = require('method-override');
 require('dotenv').config();
 
 const MongoClient = require("mongodb").MongoClient;
 const MONGODB_URI = process.env.MONGODB_URI;
 
 app.use(bodyParser.urlencoded());
+app.use(cookieParser());
 
 //overrride with POST having ?_method=DELETE
 app.use(methodOverride('_method'));
@@ -78,7 +80,8 @@ app.get('/urls', (req, res) => {
 
 // gets URLS/new page
 app.get('/urls/new', (req, res) => {
-  res.render('urls_new', {});
+  res.render('urls_new', {
+      username: req.cookies["username"]});
 });
 
 //shows the page to update short URL
@@ -86,11 +89,10 @@ app.get('/urls/:id', (req, res) => {
   var shortURL = req.params.id;
   getLongURL(shortURL, (err, longURL) => {
     res.render('urls_show', {
-      shortURL: shortURL
+      shortURL: shortURL,
     });
   });
 });
-
 
 //redirects user to longURL
 app.get('/u/:shortURL', (req, res) => {
@@ -111,6 +113,18 @@ app.post('/urls', (req, res) => {
   var newURL = req.body.longURL;
   postURL(randomString, newURL);
   res.redirect("/urls");         // Respond with URLS_index page
+});
+
+app.post('/login', (req, res) => {
+  res.cookie("username", req.body.username);
+  res.redirect("/");
+
+});
+
+app.post('/logout', (req, res) => {
+  res.clearCookie("username", { path: '/' })
+  res.redirect("/");
+
 });
 
 //deletes a shortened URL from database

@@ -1,1 +1,13 @@
-  <h1>TinyApp&trade;</h1>
+<h1>TinyApp&trade;</h1>
+
+<% if (username) { %>
+  <p> <%= username %> </p>
+  <form method="POST" action="/logout">
+  <input type="submit" name="logout" value="logout"></input>
+  </form>
+<% } else { %>
+<form method="POST" action="/login">
+  <input type="text" name="username"></input>
+  <input id="loginButton" type="submit" value="login">
+</form>
+<%}%>
